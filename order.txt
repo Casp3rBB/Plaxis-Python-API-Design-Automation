@@ -1,0 +1,12 @@
+PLAXIS Report
+Initial phase [InitialPhase]
+Installation of Sheet Pile [Phase_1]
+Excavation_Lv 1 [Phase_2]
+Installation of Strut_Lv1 [Phase_3]
+Excavation_Lv2 [Phase_4]
+Installation of Strut_Lv2 [Phase_5]
+Excavation_Lv3 [Phase_6]
+Installation of Strut_Lv3 [Phase_7]
+Excavation_Lv4 [Phase_8]
+Installation of Strut_Lv4 [Phase_9]
+FEL [Phase_10]
