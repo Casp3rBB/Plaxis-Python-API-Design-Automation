@@ -409,6 +409,10 @@ class PlxSettlement():
         self.x1 = None
         self.x2 = None
         self.result = []
+        self.phases = g_o.Phases
+        self.t0 = datetime.now()
+        self.plaxis_path = str(g_o.generalinfo.Filename)
+        self.phases_name = [str(x.Identification).replace('[' + str(x.Name) + ']', '').replace(',', '&') for x in self.phases]
 
     def PlxSettlement(self, x1=None, x2=None, level=None, auto=True):
         if auto:
@@ -421,9 +425,7 @@ class PlxSettlement():
             self.level = level
         
         self.GetSettlement()
-
-
-        
+        self.PrintSettlement()
 
     def GetUserInputLevel(self):
         x1, x2, level = input('Please enter the min_x, max_x, and y_level for the section cut for settlement (separated by space in between): ').split()
@@ -436,7 +438,7 @@ class PlxSettlement():
         y_list = g_o.getresults(g_o.Phases[0], g_o.ResultTypes.Soil.Y, 'node')
         self.x1 = min(x_list)
         self.x2 = max(x_list)
-        self.level = max(y_list) - 0.05 # default cut ground settlement at 50mm below ground level
+        self.level = max(y_list) - 0.1 # default cut ground settlement at 100mm below ground level
 
     def GetSettlement(self):
         g_o.linecrosssectionplot(g_o.Plot_1, (self.x1, self.level), (self.x2, self.level))
@@ -453,6 +455,37 @@ class PlxSettlement():
                 
             self.result.append(NodesSettlement(ground_x, ground_uy))
 
+    def AppendLine(self, arr_to_append, multiline=False): # expect a list if multiline==False, else expect a list of list
+        if multiline == False:
+            self.res.append(','.join(map(str, arr_to_append)))
+        else:
+            _ = [self.res.extend((','.join(map(str, x))) for x in arr_to_append)]
+
+    def PrintSettlement(self):
+        print('Please wait, processing...')
+        print('Format as follow: ')
+        print('Phase, x coordinate in meter')
+        print('Phase, vertical settlement in meter')
+        print('================================')
+        
+        self.res = []
+        self.AppendLine(['#START_SETTLEMENT#'])
+        
+        for i, phase in enumerate(g_o.Phases):
+            self.AppendLine([str(phase.Identification)] + ['x'] + list(self.result[i].X))
+            self.AppendLine([str(phase.Identification)] + ['Uy'] + list(self.result[i].Uy))
+
+        self.AppendLine(['#END_SETTLEMENT#'])
+
+        plaxis_folder = os.path.dirname(self.plaxis_path)
+        plaxis_name = os.path.basename(self.plaxis_path)
+        datafile_name = '{}-{}.csv'.format(plaxis_name.replace('.p2dx', '_WallForces_'), datetime.now().strftime('%Y%m%d,%H-%M-%S'))
+        datafile_path = os.path.join(plaxis_folder, datafile_name)
+        with open(datafile_path, 'w+') as f:
+            _ = [f.writelines(x+'\n') for x in self.res]
+        
+        print('time elapsed: {} seconds'.format(datetime.now()-self.t0))
+        print('Data file saved here: \n{}'.format(datafile_path))
 
 
     
