@@ -487,7 +487,9 @@ class PlxSettlement():
         print('time elapsed: {} seconds'.format(datetime.now()-self.t0))
         print('Data file saved here: \n{}'.format(datafile_path))
 
-
+def SettlementAutomation(x1=None, x2=None, level=None):
+    s = PlxSettlement()
+    s.PlxSettlement()
     
 
 
