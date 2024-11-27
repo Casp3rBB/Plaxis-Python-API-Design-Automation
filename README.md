@@ -1,10 +1,10 @@
-# Project Title
+# PLAXIS Python Design Automation
 
 This repository contains a collection of Python scripts for automating the extraction and processing of geotechnical data from PLAXIS models. The scripts are designed to streamline the workflow for analyzing cross-section results, strut forces, wall forces, settlements, and more. They provide functionalities for batch processing of multiple models.
 
 ## Table of Contents
 
-- [Installation](#installation)
+- [Usage](#usage)
 - [Functions](#functions)
     - [Core Functions](#core-functions)
     - [Section Analysis](#section-analysis)
@@ -12,7 +12,7 @@ This repository contains a collection of Python scripts for automating the extra
     - [Miscellaneous](#miscellaneous)
 - [Author](#author)
 
-## Installation
+## Usage 
 
 To use the scripts in this repository, you need to have Plaxis 2D installed on your machine.
 
