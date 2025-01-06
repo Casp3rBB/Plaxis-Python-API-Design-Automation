@@ -60,7 +60,7 @@ class AutoReportGenerator:
     def InitializeNewModel(self):
         self.plaxis_path = str(g_o.generalinfo.Filename)
         self.plaxis_folder = os.path.dirname(self.plaxis_path)
-        self.output_folder = self.plaxis_path[:-5] + self.t0.strftime("%Y-%m-%d %H.%M.%S")
+        self.output_folder = self.plaxis_path[:-5] + ' - ' + self.t0.strftime("%Y-%m-%d %H.%M.%S")
 
     def ExportView(self, viewname):
         filename = os.path.join(self.output_folder, viewname)
@@ -69,6 +69,7 @@ class AutoReportGenerator:
     def Command_GeneralView(self, scale):
         g_o.Plots[-1].ScaleFactor = scale
         for idx, phase in enumerate(g_o.Phases):
+            g_o.set(g_o.Plots[-1].Phase, phase)
             viewname = '{} - {}'.format(idx+1, phase.Identification)
             self.ExportView(viewname)
         
