@@ -12,8 +12,14 @@ s_o = s_o
 
 class AutoReportGenerator:
 
+    EXPORT_WIDTH = 1920
+    EXPORT_HEIGHT = 1080
+
     def __init__(self):
         self.t0 = datetime.now()
+        self.plaxis_path = ''
+        self.plaxis_folder = ''
+        self.output_folder = ''
 
     def AutoReportGenerator(self):
         self.InputFileReader()
@@ -31,25 +37,39 @@ class AutoReportGenerator:
         for idx, input_command in enumerate(self.input_commands):
             input_command = input_command.lower()
             input_command = input_command.split('|')
+            print(input_command[0])
 
             if input_command[0] == '':
                 continue
-            elif input_command[0] == 'new model':
-                new_model_path = input_command[1]
-                self.OpenNewModel(new_model_path)
+            elif input_command[0] == 'open model':
+                # New Model | Model Full Path
+                model_path = input_command[1]
+                self.OpenModel(model_path)
                 self.InitializeNewModel()
             elif input_command[0] == 'general view':
-                
+                # General View | Scale
+                scale = float(input_command[1])
+                self.Command_GeneralView(scale)
 
 
 
-    def OpenNewModel(self, model_path):
+    def OpenModel(self, model_path):
         s_o.close()
         s_o.open(model_path)
 
     def InitializeNewModel(self):
         self.plaxis_path = str(g_o.generalinfo.Filename)
         self.plaxis_folder = os.path.dirname(self.plaxis_path)
-        self.output_folder = os.path.join(self.plaxis_path[:-5], self.t0.strftime("%Y-%m-%d %H:%M:%S"))
+        self.output_folder = self.plaxis_path[:-5] + self.t0.strftime("%Y-%m-%d %H.%M.%S")
+
+    def ExportView(self, viewname):
+        filename = os.path.join(self.output_folder, viewname)
+        g_o.Plots[-1].export(filename, self.EXPORT_WIDTH, self.EXPORT_HEIGHT)
+
+    def Command_GeneralView(self, scale):
+        g_o.Plots[-1].ScaleFactor = scale
+        for idx, phase in enumerate(g_o.Phases):
+            viewname = '{} - {}'.format(idx+1, phase.Identification)
+            self.ExportView(viewname)
         
     
