@@ -37,7 +37,8 @@ class AutoReportGenerator:
         for idx, input_command in enumerate(self.input_commands):
             input_command = input_command.lower()
             input_command = input_command.split('|')
-            print(input_command[0])
+            input_command = [x.strip() for x in input_command]
+            print(input_command[0]) # **********************************************PRINT******************
 
             if input_command[0] == '':
                 continue
@@ -50,6 +51,15 @@ class AutoReportGenerator:
                 # General View | Scale
                 scale = float(input_command[1])
                 self.Command_GeneralView(scale)
+            elif input_command[0] == 'cross section cut':
+                # Cross Section Cut | x1 | y1 | x2 | y2 | Plot Type | Result Type | *Phases
+                x1 = float(input_command[1])
+                y1 = float(input_command[2])
+                x2 = float(input_command[3])
+                y2 = float(input_command[4])
+                plot_type = input_command[5]
+                result_type = input_command[6]
+                self.Command_CrossSectionCut(x1, y1, x2, y2, plot_type, result_type)
 
 
 
@@ -70,7 +80,10 @@ class AutoReportGenerator:
         g_o.Plots[-1].ScaleFactor = scale
         for idx, phase in enumerate(g_o.Phases):
             g_o.set(g_o.Plots[-1].Phase, phase)
-            viewname = '{} - {}'.format(idx+1, phase.Identification)
+            viewname = 'General View - {} - {}'.format(idx+1, phase.Identification)
             self.ExportView(viewname)
+
+    def Command_CrossSectionCut(self, x1, y1, x2, y2, plot_type, result_type):
+
         
     
