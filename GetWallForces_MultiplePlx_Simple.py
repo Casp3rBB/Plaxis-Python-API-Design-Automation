@@ -93,5 +93,39 @@ def ExtractStageByStageWallForce_Simple():
             except plxscripting.plx_scripting_exceptions.PlxScriptingError:
                 pass
 
+
+def BatchExtractWallForce_Full():
+    models = []
+    get_input(models)
+    result_txt = input('Please input the folder path you wish yout result txt to be saved: ')
+    t0 = datetime.now()
+    output_txt = os.path.join(result_txt, 'Wall results '+str(t0).replace(':', '.')+'.txt')
+
+    with open(output_txt, 'w') as f:
+
+        for model in models:
+            s_o.open(model)
+            
+            model_name = os.path.basename(model).replace(',', '')
+
+            f.write('\n ===================================' +'\n')
+            f.write('PlaxisModel={}, Phase={}'.format(model_name, str(g_o.Phases[-1].Identification)) +'\n')
+            f.write('X, Y, M_max, M_min, Q_max, Q_min, Ux' +'\n')
+
+            for i, plate in enumerate(g_o.Plates):
+                moment_max = g_o.getresults(plate, g_o.Phases[-1], g_o.ResultTypes.Plate.M_EnvelopeMax2D, 'node')
+                moment_min = g_o.getresults(plate, g_o.Phases[-1], g_o.ResultTypes.Plate.M_EnvelopeMin2D, 'node')
+                shear_max = g_o.getresults(plate, g_o.Phases[-1], g_o.ResultTypes.Plate.Q_EnvelopeMax2D, 'node')
+                shear_min = g_o.getresults(plate, g_o.Phases[-1], g_o.ResultTypes.Plate.Q_EnvelopeMin2D, 'node')
+                x_coor = g_o.getresults(plate, g_o.Phases[-1], g_o.ResultTypes.Plate.X, 'node')
+                y_coor = g_o.getresults(plate, g_o.Phases[-1], g_o.ResultTypes.Plate.Y, 'node')
+                ux = g_o.getresults(plate, g_o.Phases[-1], g_o.ResultTypes.Plate.Ux, 'node')
+
+                for i in range(len(x_coor)):
+                    f.write(','.join(list(map(str, [x_coor[i], y_coor[i], moment_max[i], moment_min[i], shear_max[i], shear_min[i], ux[i]]))) +'\n')
+            
+            s_o.close()
+
+
 if __name__ == '__main__':
-    BatchExtractWallForce_Simple()
+    BatchExtractWallForce_Full()
